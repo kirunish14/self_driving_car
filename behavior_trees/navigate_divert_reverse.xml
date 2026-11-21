@@ -1,0 +1,57 @@
+<!--
+  DIVERT AROUND OBSTACLES - REVERSE ONLY WHEN STUCK - DRIVE STRAIGHT
+
+  1. Normal driving: the path is planned ONCE and the car follows it. It is checked twice a second and a NEW path is
+     only planned when (a) the old path is blocked by something the lidar now sees (-> the car diverts around it,
+     it does not wait) or (b) there is a new goal. No constant re-planning = no wobbling on straight paths.
+  2. If the car is too close to divert (no path / controller stops before a collision):
+        wait 3 s  (maybe the obstacle leaves)  ->  try again
+        still blocked: reverse 0.5 m, try again to find a way around  (up to 5 times, i.e. 2.5 m back)
+     If something is behind the car and it cannot reverse, it waits 3 s and tries again.
+  3. After 7 recovery steps the goal is given up (the dashboard shows FAILED).
+  No spinning: an Ackermann car cannot rotate in place.
+  Needs the Nav2 node IsPathValid. If your Nav2 lacks it the launch file uses navigate_divert_reverse_basic.xml.
+-->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="7" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanningOnlyWhenBlocked">
+        <RateController hz="2.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <Fallback name="PlanOnlyWhenNeeded">
+              <ReactiveSequence name="PathStillGood">
+                <Inverter>
+                  <GoalUpdated/>
+                </Inverter>
+                <IsPathValid path="{path}"/>
+              </ReactiveSequence>
+              <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+            </Fallback>
+            <ReactiveFallback name="ComputePathToPoseRecoveryFallback">
+              <GoalUpdated/>
+              <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
+            </ReactiveFallback>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <ReactiveFallback name="FollowPathRecoveryFallback">
+            <GoalUpdated/>
+            <ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/>
+          </ReactiveFallback>
+        </RecoveryNode>
+      </PipelineSequence>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="WaitThenReverse">
+          <Wait wait_duration="3"/>
+          <BackUp backup_dist="0.5" backup_speed="0.15"/>
+          <BackUp backup_dist="0.5" backup_speed="0.15"/>
+          <BackUp backup_dist="0.5" backup_speed="0.15"/>
+          <BackUp backup_dist="0.5" backup_speed="0.15"/>
+          <BackUp backup_dist="0.5" backup_speed="0.15"/>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>

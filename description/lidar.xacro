@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========================================================= -->
+  <!-- LIDAR JOINT                                               -->
+  <!-- ========================================================= -->
+
+  <joint
+      name="laser_joint"
+      type="fixed">
+
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+
+    <!-- LiDAR mounted above the front box -->
+    <!-- X = forward, Y = left, Z = up -->
+
+    <origin
+        xyz="0.122 0 0.50"
+        rpy="0 0 0"/>
+
+  </joint>
+
+
+  <!-- ========================================================= -->
+  <!-- LIDAR LINK                                                -->
+  <!-- ========================================================= -->
+
+  <link name="laser_frame">
+
+    <!-- ======================================================= -->
+    <!-- LIDAR BODY                                               -->
+    <!-- ======================================================= -->
+
+    <visual>
+
+      <origin
+          xyz="0 0 0"
+          rpy="0 0 0"/>
+
+      <geometry>
+
+        <cylinder
+            radius="0.05"
+            length="0.04"/>
+
+      </geometry>
+
+      <material name="lidar_black">
+
+        <color
+            rgba="0.02 0.02 0.02 1.0"/>
+
+      </material>
+
+    </visual>
+
+
+    <!-- ======================================================= -->
+    <!-- LIDAR SUPPORT STEM                                      -->
+    <!-- ======================================================= -->
+
+    <visual>
+
+      <origin
+          xyz="0 0 -0.05"
+          rpy="0 0 0"/>
+
+      <geometry>
+
+        <cylinder
+            radius="0.01"
+            length="0.10"/>
+
+      </geometry>
+
+      <material name="lidar_stem_black">
+
+        <color
+            rgba="0.02 0.02 0.02 1.0"/>
+
+      </material>
+
+    </visual>
+
+
+    <!-- ======================================================= -->
+    <!-- COLLISION                                                -->
+    <!-- ======================================================= -->
+
+    <collision>
+
+      <origin
+          xyz="0 0 0"
+          rpy="0 0 0"/>
+
+      <geometry>
+
+        <cylinder
+            radius="0.05"
+            length="0.04"/>
+
+      </geometry>
+
+    </collision>
+
+
+    <!-- ======================================================= -->
+    <!-- INERTIA                                                  -->
+    <!-- ======================================================= -->
+
+    <xacro:cylinder_inertia
+        mass="0.10"
+        radius="0.05"
+        length="0.04"/>
+
+  </link>
+
+
+  <!-- ========================================================= -->
+  <!-- GAZEBO LIDAR                                             -->
+  <!-- ========================================================= -->
+
+  <gazebo reference="laser_frame">
+
+    <material>
+      Gazebo/Black
+    </material>
+
+
+    <sensor
+        name="laser"
+        type="ray">
+
+      <!-- Sensor position relative to laser_frame -->
+
+      <pose>
+        0 0 0 0 0 0
+      </pose>
+
+
+      <!-- Show laser rays in Gazebo -->
+
+      <visualize>
+        true
+      </visualize>
+
+
+      <!-- 10 scans per second -->
+
+      <update_rate>
+        10
+      </update_rate>
+
+
+      <!-- ===================================================== -->
+      <!-- RAY SENSOR                                             -->
+      <!-- ===================================================== -->
+
+      <ray>
+
+        <scan>
+
+          <horizontal>
+
+            <!-- 360 degree scan -->
+
+            <samples>
+              360
+            </samples>
+
+            <resolution>
+              1
+            </resolution>
+
+            <min_angle>
+              -3.14159
+            </min_angle>
+
+            <max_angle>
+              3.14159
+            </max_angle>
+
+          </horizontal>
+
+        </scan>
+
+
+        <!-- =================================================== -->
+        <!-- RANGE                                                -->
+        <!-- =================================================== -->
+
+        <range>
+
+          <min>
+            0.30
+          </min>
+
+          <max>
+            12.0
+          </max>
+
+          <resolution>
+            0.01
+          </resolution>
+
+        </range>
+
+      </ray>
+
+
+      <!-- ===================================================== -->
+      <!-- ROS 2 LASER SCAN PLUGIN                               -->
+      <!-- ===================================================== -->
+
+      <plugin
+          name="laser_controller"
+          filename="libgazebo_ros_ray_sensor.so">
+
+        <ros>
+
+          <argument>
+            ~/out:=scan
+          </argument>
+
+        </ros>
+
+        <output_type>
+          sensor_msgs/LaserScan
+        </output_type>
+
+        <frame_name>
+          laser_frame
+        </frame_name>
+
+      </plugin>
+
+    </sensor>
+
+  </gazebo>
+
+</robot>

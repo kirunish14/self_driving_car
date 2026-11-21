@@ -1,0 +1,37 @@
+# =====================================================================
+#  ALL the numbers that describe YOUR real car. Measure them and edit.
+#  base_footprint = centre of the REAR AXLE (standard for Ackermann cars).
+# =====================================================================
+car:
+  # ---- geometry (metres) ----
+  wheelbase: 0.76  
+  wheel_radius: 0.10         # m, used only to draw the car in RViz         # rear axle -> front 
+  front_overhang: 0.98       # rear axle -> very front of the car body     (MEASURE)
+  rear_overhang: 0.22        # rear axle -> very back of the car body      (MEASURE)
+  width: 0.64                # full width of the car body incl. wheels     (MEASURE)
+
+  # ---- steering ----
+  # Real WHEEL angle (degrees) when the servo is at 77 deg (full left) / 117 deg (full right).
+  # Lift the front wheels and measure it with a protractor / phone. Servo +-20 deg does NOT
+  # automatically mean wheel +-20 deg (depends on your steering linkage).
+  max_steer_deg: 20.0
+
+  # ---- speed ----
+  max_speed: 0.40            # m/s hard limit used by Nav2 and the bridge (keep LOW at first)
+  v_at_full_cmd: 0.80        # m/s the car really does at command = 1.0 (CALIBRATE, see README)
+  accel_limit: 0.50          # m/s^2   smooth start/stop
+  steer_rate_limit: 1.50     # rad/s   how fast the steering is allowed to move
+  max_reverse_speed: 0.20    # m/s    reverse is slower (you cannot see behind); used for K-turns
+  steer_settle_deg: 4.0      # deg     before moving / reversing, wait until the steering is this close to the target
+
+  # ---- lidar position relative to base_footprint (rear axle centre) ----
+  lidar_x: 0.60
+  lidar_y: 0.0
+  lidar_z: 0.45
+  lidar_yaw: 0.0             # radians, 0 = lidar "front" points forward
+
+  # ---- serial ports ----
+  esp32_port: /dev/esp32   
+  esp32_baud: 115200
+  lidar_port: /dev/rplidar
+  lidar_baud: 115200         # RPLIDAR A1/A2 = 115200, A3/S1 = 256000

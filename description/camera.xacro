@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========================================================= -->
+  <!-- CAMERA MOUNT                                              -->
+  <!-- ========================================================= -->
+
+  <joint
+      name="camera_joint"
+      type="fixed">
+
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+
+    <!--
+      Vehicle coordinates:
+        +X = forward
+        +Y = left
+        +Z = up
+
+      Camera is mounted high at the front.
+    -->
+
+    <origin
+        xyz="0.50 0 0.75"
+        rpy="0 0 0"/>
+
+  </joint>
+
+
+  <!-- ========================================================= -->
+  <!-- CAMERA BODY                                               -->
+  <!-- ========================================================= -->
+
+  <link name="camera_link">
+
+    <visual>
+
+      <origin
+          xyz="0 0 0"
+          rpy="0 0 0"/>
+
+      <geometry>
+
+        <box
+            size="0.08 0.06 0.05"/>
+
+      </geometry>
+
+      <material name="camera_black">
+
+        <color
+            rgba="0.02 0.02 0.02 1.0"/>
+
+      </material>
+
+    </visual>
+
+
+    <collision>
+
+      <origin
+          xyz="0 0 0"
+          rpy="0 0 0"/>
+
+      <geometry>
+
+        <box
+            size="0.08 0.06 0.05"/>
+
+      </geometry>
+
+    </collision>
+
+
+    <xacro:box_inertia
+        mass="0.05"
+        x="0.08"
+        y="0.06"
+        z="0.05"/>
+
+  </link>
+
+
+  <!-- ========================================================= -->
+  <!-- CAMERA OPTICAL FRAME                                      -->
+  <!-- ========================================================= -->
+
+  <joint
+      name="camera_optical_joint"
+      type="fixed">
+
+    <parent link="camera_link"/>
+
+    <child link="camera_link_optical"/>
+
+    <!--
+      ROS REP-103 optical frame:
+
+        X = right
+        Y = down
+        Z = forward
+    -->
+
+    <origin
+        xyz="0 0 0"
+        rpy="${-pi/2} 0 ${-pi/2}"/>
+
+  </joint>
+
+
+  <link name="camera_link_optical"/>
+
+
+  <!-- ========================================================= -->
+  <!-- GAZEBO CAMERA                                             -->
+  <!-- ========================================================= -->
+
+  <gazebo reference="camera_link">
+
+    <sensor
+        name="camera"
+        type="camera">
+
+      <!-- Camera continuously active -->
+
+      <always_on>true</always_on>
+
+      <!-- Show camera image in Gazebo -->
+
+      <visualize>true</visualize>
+
+      <!-- 10 FPS -->
+
+      <update_rate>10.0</update_rate>
+
+
+      <!-- ===================================================== -->
+      <!-- CAMERA CONFIGURATION                                 -->
+      <!-- ===================================================== -->
+
+      <camera name="camera">
+
+        <!--
+          Wider FOV.
+
+          1.57 rad = 90 degrees
+          1.90 rad = ~109 degrees
+
+          This allows the camera to see more of the road
+          and surrounding buildings.
+        -->
+
+        <horizontal_fov>1.90</horizontal_fov>
+
+
+        <!-- =================================================== -->
+        <!-- IMAGE                                                -->
+        <!-- =================================================== -->
+
+        <image>
+
+          <format>R8G8B8</format>
+
+          <width>640</width>
+
+          <height>480</height>
+
+        </image>
+
+
+        <!-- =================================================== -->
+        <!-- CLIPPING                                             -->
+        <!-- =================================================== -->
+
+        <clip>
+
+          <!-- Minimum visible distance -->
+
+          <near>0.05</near>
+
+          <!-- Maximum visible distance -->
+
+          <far>300.0</far>
+
+        </clip>
+
+      </camera>
+
+
+      <!-- ===================================================== -->
+      <!-- ROS 2 CAMERA PLUGIN                                   -->
+      <!-- ===================================================== -->
+
+      <plugin
+          name="camera_controller"
+          filename="libgazebo_ros_camera.so">
+
+        <ros>
+
+          <namespace>/camera</namespace>
+
+        </ros>
+
+        <camera_name>camera</camera_name>
+
+        <frame_name>camera_link_optical</frame_name>
+
+      </plugin>
+
+    </sensor>
+
+  </gazebo>
+
+</robot>

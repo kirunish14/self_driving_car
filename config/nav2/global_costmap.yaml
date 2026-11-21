@@ -1,0 +1,50 @@
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: true
+
+      global_frame: map
+      robot_base_frame: base_footprint
+
+      update_frequency: 5.0
+      publish_frequency: 2.0
+
+      resolution: 0.1
+
+      track_unknown_space: true
+      rolling_window: false
+
+      footprint: "[[0.65, 0.35], [0.65, -0.35], [-0.65, -0.35], [-0.65, 0.35]]"
+
+      plugins:
+        - static_layer
+        - obstacle_layer
+        - inflation_layer
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: true
+        observation_sources: scan
+        scan:
+          topic: /scan
+          data_type: LaserScan
+          clearing: true
+          marking: true
+          inf_is_valid: true
+          # ===== AVOID DISTANCE =====
+          # A new obstacle is added to the map (and the path re-planned around it)
+          # as soon as it is closer than obstacle_max_range metres.
+          # Bigger value = car starts going around earlier.
+          obstacle_max_range: 5.0
+          raytrace_max_range: 6.0
+          obstacle_min_range: 0.30
+          raytrace_min_range: 0.30
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.9
+        cost_scaling_factor: 3.0

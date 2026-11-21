@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========================================================= -->
+  <!-- CAMERA MOUNT                                              -->
+  <!-- ========================================================= -->
+
+  <joint
+      name="camera_joint"
+      type="fixed">
+
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+
+    <origin
+        xyz="0.48 0 0.34"
+        rpy="0 0 0"/>
+
+  </joint>
+
+
+  <!-- ========================================================= -->
+  <!-- CAMERA BODY                                               -->
+  <!-- ========================================================= -->
+
+  <link name="camera_link">
+
+    <visual>
+
+      <geometry>
+        <box size="0.08 0.06 0.05"/>
+      </geometry>
+
+      <material name="camera_black">
+        <color rgba="0.02 0.02 0.02 1.0"/>
+      </material>
+
+    </visual>
+
+    <collision>
+
+      <geometry>
+        <box size="0.08 0.06 0.05"/>
+      </geometry>
+
+    </collision>
+
+    <xacro:box_inertia
+        mass="0.05"
+        x="0.08"
+        y="0.06"
+        z="0.05"/>
+
+  </link>
+
+
+  <!-- ========================================================= -->
+  <!-- CAMERA OPTICAL FRAME                                      -->
+  <!-- ========================================================= -->
+
+  <joint
+      name="camera_optical_joint"
+      type="fixed">
+
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+
+    <!-- ROS optical frame:
+         X = right
+         Y = down
+         Z = forward
+    -->
+
+    <origin
+        xyz="0 0 0"
+        rpy="${-pi/2} 0 ${-pi/2}"/>
+
+  </joint>
+
+  <link name="camera_link_optical"/>
+
+
+  <!-- ========================================================= -->
+  <!-- GAZEBO RGB + DEPTH CAMERA                                -->
+  <!-- ========================================================= -->
+
+  <gazebo reference="camera_link">
+
+    <sensor
+        name="rgbd_camera"
+        type="depth">
+
+      <always_on>true</always_on>
+
+      <visualize>true</visualize>
+
+      <update_rate>10.0</update_rate>
+
+
+      <!-- ===================================================== -->
+      <!-- CAMERA                                                -->
+      <!-- ===================================================== -->
+
+      <camera name="rgbd_camera">
+
+        <horizontal_fov>1.089</horizontal_fov>
+
+
+        <!-- =================================================== -->
+        <!-- RGB IMAGE                                            -->
+        <!-- =================================================== -->
+
+        <image>
+
+          <format>R8G8B8</format>
+
+          <width>640</width>
+
+          <height>480</height>
+
+        </image>
+
+
+        <!-- =================================================== -->
+        <!-- DEPTH IMAGE                                         -->
+        <!-- =================================================== -->
+
+        <depth_camera>
+
+          <output>depths</output>
+
+        </depth_camera>
+
+
+        <!-- =================================================== -->
+        <!-- CLIPPING                                            -->
+        <!-- =================================================== -->
+
+        <clip>
+
+          <near>0.05</near>
+
+          <far>8.0</far>
+
+        </clip>
+
+      </camera>
+
+
+      <!-- ===================================================== -->
+      <!-- ROS 2 GAZEBO DEPTH CAMERA PLUGIN                      -->
+      <!-- ===================================================== -->
+
+      <plugin
+          name="depth_camera_controller"
+          filename="libgazebo_ros_camera.so">
+
+        <ros>
+
+          <namespace>/camera</namespace>
+
+        </ros>
+
+        <camera_name>camera</camera_name>
+
+        <frame_name>camera_link_optical</frame_name>
+
+      </plugin>
+
+    </sensor>
+
+  </gazebo>
+
+</robot>

@@ -1,0 +1,51 @@
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: true
+
+      global_frame: odom
+      robot_base_frame: base_footprint
+
+      update_frequency: 5.0
+      publish_frequency: 2.0
+
+      rolling_window: true
+      always_send_full_costmap: true
+
+      width: 6
+      height: 6
+      resolution: 0.05
+
+      footprint: "[[0.65, 0.35], [0.65, -0.35], [-0.65, -0.35], [-0.65, 0.35]]"
+
+      # articubot_one uses a voxel layer for the local costmap
+      plugins:
+        - voxel_layer
+        - inflation_layer
+
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: true
+        publish_voxel_map: true
+        origin_z: 0.0
+        z_resolution: 0.1
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: scan
+        scan:
+          topic: /scan
+          data_type: LaserScan
+          clearing: true
+          marking: true
+          inf_is_valid: true
+          max_obstacle_height: 2.0
+          obstacle_max_range: 12.0
+          raytrace_max_range: 12.0
+          obstacle_min_range: 0.30
+          raytrace_min_range: 0.30
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.9
+        cost_scaling_factor: 3.0
