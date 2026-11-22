@@ -266,6 +266,10 @@ More in [`docs/GUIDE.md`](docs/GUIDE.md) §6, §10 and §11.
 - Hardware emergency-stop and a higher-current motor driver
 - Quantitative benchmarks from recorded rosbag logs
 
+## 🎬 Demo
+
+[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg)](https://youtu.be/VIDEO_ID)
+
 ## 👥 Team
 
 B.E. Mechatronics Engineering, **Chandigarh University**, Mohali, Punjab, India
