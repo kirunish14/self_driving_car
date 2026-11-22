@@ -268,7 +268,7 @@ More in [`docs/GUIDE.md`](docs/GUIDE.md) §6, §10 and §11.
 
 ## 🎬 Demo
 
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg)](https://youtu.be/VIDEO_ID)
+[![Watch the demo](https://www.youtube.com/playlist?list=PLVAP_nG7tlU4)](https://youtu.be/VIDEO_ID)
 
 ## 👥 Team
 
