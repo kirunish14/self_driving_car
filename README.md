@@ -11,6 +11,8 @@
 ![ESP32](https://img.shields.io/badge/MCU-ESP32-E7352C)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
+[![Watch the demo on YouTube](https://img.shields.io/badge/YouTube-Watch%20the%20demo-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/playlist?list=PLVAP_nG7tlU4)
+
 <img src="docs/images/vehicle.jpg" alt="The vehicle: (a) side view, (b) front view with camera, (c) top view with LiDAR" width="720">
 
 <sub>(a) side view · (b) front, with the camera · (c) top, with the 360° LiDAR</sub>
@@ -18,6 +20,12 @@
 </div>
 
 ---
+
+## 🎬 Demo
+
+See the vehicle running — mapping, navigation and the dashboard in action:
+
+▶️ **[Watch the demo videos on YouTube](https://www.youtube.com/playlist?list=PLVAP_nG7tlU4)**
 
 ## Overview
 
@@ -265,10 +273,6 @@ More in [`docs/GUIDE.md`](docs/GUIDE.md) §6, §10 and §11.
 - Outdoor operation with GNSS
 - Hardware emergency-stop and a higher-current motor driver
 - Quantitative benchmarks from recorded rosbag logs
-
-## 🎬 Demo
-
-[![Watch the demo](https://www.youtube.com/playlist?list=PLVAP_nG7tlU4)](https://youtu.be/VIDEO_ID)
 
 ## 👥 Team
 
